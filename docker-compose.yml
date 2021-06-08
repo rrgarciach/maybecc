@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+
+  maybecc:
+    container_name: maybecc
+    restart: on-failure
+    build: .
+    command: npm start
+    volumes:
+      - .:/home/node/app/
+      - /home/node/app/node_modules/
+    ports:
+      - 9000:9000
+    depends_on:
+      - maybecc-pg
+    environment:
+      POSTGRES_HOST: maybecc-pg
+      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: maybecc-pg
+      POSTGRES_DB: maybe_master_db
+    external_links:
+      - maybecc-pg
+    network_mode: bridge
+
+  maybecc-pg:
+    container_name: maybecc-pg
+    image: postgres:12.3-alpine
+    restart: on-failure
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: maybecc-pg
+      POSTGRES_DB: maybe_master_db
+    network_mode: bridge
+
